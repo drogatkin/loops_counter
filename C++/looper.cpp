@@ -17,7 +17,6 @@ struct ROPE
 {
 	TIE left_con;
 	TIE right_con;
-	//int num;
 	int marker;
 };
 
@@ -55,10 +54,10 @@ int main(int argc, char *argv[])
 				randend--;
 				if (randend == 0)
 				{
-					// this one
+				 		// this one
 					if (selected.rope_num > -1)
 					{
-						// one side already selected to be connected 
+					 			// one side already selected to be connected 
 						rope.left_con.rope_num = selected.rope_num;
 						rope.left_con.side = selected.side;
 						switch (selected.side)
@@ -92,10 +91,10 @@ int main(int argc, char *argv[])
 				randend--;
 				if (randend == 0)
 				{
-					// this one
+				 		// this one
 					if (selected.rope_num > -1)
 					{
-						// connected
+					 			// connected
 						rope.right_con.rope_num = selected.rope_num;
 						rope.right_con.side = selected.side;
 						switch (selected.side)
@@ -131,48 +130,40 @@ int main(int argc, char *argv[])
 		cout << "Rope " << &rope - &ropes[0] << " left " << rope.left_con.rope_num << " right " << rope.right_con.rope_num << "\n";
 	}
 	// find all loops 
-	bool loop_found = false;
 	int loops_tot = 0;
-	do {
-		for (ROPE &rope: ropes)
+	int sing_loops = 0;
+	for (ROPE &rope: ropes)
+	{
+		if (rope.marker < 1)
 		{
-			if (rope.marker < 1)
+			loops_tot++;
+			rope.marker = loops_tot;
+			// move left or right, doesn't matter
+			ROPE& next_rope = ropes[rope.right_con.rope_num];
+			Side& next_side = rope.right_con.side;
+			if (next_rope.marker > 0)
+  				sing_loops++;
+			while (next_rope.marker < 1)
 			{
-				loop_found = true;
-				loops_tot++;
-				rope.marker = loops_tot;
-				// move left or right, doesn't matter
-				ROPE &next_rope = ropes[rope.right_con.rope_num];
+			 	// which side usage for calculating next
 				next_rope.marker = loops_tot;
-				while (1)
+				switch (next_side)
 				{
-					if (next_rope.marker == loops_tot)
-					{
-						// a loop completed
+					case Side::right:
+						next_rope = ropes[next_rope.right_con.rope_num];
+						next_side = next_rope.right_con.side;
+						cout << "Next rope " << next_rope.right_con.rope_num << " from right in loop " << next_rope.marker <<"\n";
 						break;
-					}
-					else
-					{
-					 			// which side usage for calculating next
-						next_rope.marker = loops_tot;
-						switch (rope.right_con.side)
-						{
-							case Side::left:
-								next_rope = ropes[next_rope.left_con.rope_num];
-								cout << "Next rope " << next_rope.left_con.rope_num << " from left\n";
-								break;
-							case Side::right:
-								next_rope = ropes[next_rope.right_con.rope_num];
-								cout << "Next rope " << next_rope.right_con.rope_num << " from right\n";
-								break;
-						}
-					}
+					case Side::left:
+						next_rope = ropes[next_rope.left_con.rope_num];
+						next_side = next_rope.left_con.side;
+						cout << "Next rope " << next_rope.left_con.rope_num << " from left in loop " << next_rope.marker <<"\n";
+						break;
 				}
 			}
-			else
-				loop_found = false;
 		}
-	} while (loop_found);
-	cout << "Found loops " << loops_tot << "\n";
+	}
+
+	cout << "Found loops " << loops_tot << " and single " << sing_loops << "\n";
 	cout << "All done\n";
 }
