@@ -1,0 +1,15 @@
+#!/bin/bash
+echo "Compile and run...."
+if [ $# -eq 0 ]; then
+    echo "No arguments provided, looper.cpp will be used"
+    filename=looper.cpp
+else
+   filename=$1
+fi
+
+gcc -Dexpclos $filename -lstdc++ -o main
+retVal=$?
+if [ $retVal == 0 ]; then
+    ./main
+fi
+
