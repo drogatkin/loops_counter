@@ -7,9 +7,13 @@ else
    filename=$1
 fi
 
-gcc -Dexpclos $filename -lstdc++ -o main
-retVal=$?
+if [[ $filename -nt ./main ]]; then
+  g++-10 -I /home/dmitriy/projects/shared/C++ -std=c++2a -Dexpclos $filename -lstdc++ -o main
+  retVal=$?
+else
+  retVal=0
+fi
 if [ $retVal == 0 ]; then
-    ./main
+    ./main $2
 fi
 
