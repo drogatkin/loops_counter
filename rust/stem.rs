@@ -1,4 +1,3 @@
-use std::ops::{Add, Mul};
 
 fn  findstem(mut arr:Vec<String>) -> Vec<String>
 {
@@ -15,64 +14,55 @@ fn  findstem(mut arr:Vec<String>) -> Vec<String>
     let s = &arr[0];
 
     let len = s.len();
+    //println!("shortest str {}", s);
  
     let mut res : Vec<String> =  vec![];
 
-    for i in 0..len {
-        
-        for j in 0..len-i+1 {
-println!("{} {}", i, j);
+    let mut i = len ;
+    while i > 0 {
+        let mut j = 0;
+        while j < len-i+1  {
+
             // generating all possible substrings
             // of our reference string arr[0] i.e s
-           let stem = &s[j..i];
+           let stem = &s[j..j+i];
 
-            let mut k : usize;
-            k = 1;
-            
-            for k in 1..n {
+            let mut k = 1;
+          //  println!("{} {} = {}", i, j, stem);
+            while k < n {
+              //  println!("sub={}  in {} ", stem, arr[k]);
                 // Check if the generated stem is
                 // common to all words
-                match arr[k].find(&stem) {
-                     // not found
-                    None => break,
-                    Some(_) => continue
+                if ! arr[k].contains(&stem) {
+                   // println!("-->{} not found in {}", stem, arr[k]);
+                    break;
                 }
+                k+=1;
             }
            // cout << "looking for " << stem << " and found in " << k << " end " << n << endl;
             // If current substring is present in all strings
+            //println!("-->{} == {}", k, n);
             if k == n {
                 res.push(stem.to_string());
             }
-                 
+            
+            j += 1;     
         }
         
         if res.len() > 0 {
             break
         }
+        i-=1;
     }
  
     return res;
 }
 
-fn dot<N>(v1: &[N], v2: &[N]) -> N
-where N: Add<Output=N> + Mul<Output=N> + Default + Copy
-{
-let mut total = N::default();
-for i in 0 .. v1.len() {
-total = total + v1[i] * v2[i];
-}
-total
-}
-
-fn test_dot() {
-assert_eq!(dot(&[1, 2, 3, 4], &[1, 1, 1, 1]), 10);
-assert_eq!(dot(&[53.0, 7.0], &[1.0, 5.0]), 88.0);
-}
 fn main() {
-    test_dot();
-    let arr = vec![ "grace".to_string(), "graceful".to_string(), "disgraceful".to_string(),
-                       "gracefully".to_string() ];
+    let arr = vec![ "graceful".to_string(), "disgraceful".to_string(),
+                       "gracefully".to_string() , "grace".to_string(), "lllasrgraca".to_string()];
     let res = findstem(arr);
     println!("{:?}", res);
+    assert_eq!(res, vec!["grac".to_string()]);
     println!("Done.")
 }
