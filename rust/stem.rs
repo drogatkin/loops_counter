@@ -1,6 +1,6 @@
-
 fn  findstem(mut arr:Vec<String>) -> Vec<String>
 {
+    // other shorter impl: https://gist.github.com/Coutlaw/cac31e5639236f99282813c32e6ed43d
     // Determine size of the array
     arr.sort_by(|l, r| { // l.size() < r.size()
        let l_len = l.len();
@@ -35,34 +35,36 @@ fn  findstem(mut arr:Vec<String>) -> Vec<String>
                 // common to all words
                 if ! arr[k].contains(&stem) {
                    // println!("-->{} not found in {}", stem, arr[k]);
-                    break;
+                    break
                 }
-                k+=1;
+                k+=1
             }
            // cout << "looking for " << stem << " and found in " << k << " end " << n << endl;
             // If current substring is present in all strings
             //println!("-->{} == {}", k, n);
             if k == n {
-                res.push(stem.to_string());
+                res.push(stem.to_string())
             }
             
-            j += 1;     
+            j += 1    
         }
         
         if res.len() > 0 {
             break
         }
-        i-=1;
+        i-=1
     }
  
-    return res;
+    res
 }
 
 fn main() {
     let arr = vec![ "graceful".to_string(), "disgraceful".to_string(),
                        "gracefully".to_string() , "grace".to_string(), "lllasrgraca".to_string()];
     let res = findstem(arr);
-    println!("{:?}", res);
+   // println!("{:?}", res);
     assert_eq!(res, vec!["grac".to_string()]);
+    let arr2 = vec!["kokobokafghtoka".to_string(), "gggtokavvboka".to_string(), "termtokagopabokah".to_string()];
+    assert_eq!(findstem(arr2), vec!["toka".to_string(), "boka".to_string()]);
     println!("Done.")
 }
