@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::io::{self, BufRead};
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Node<T> {
   pub val: T,
@@ -35,14 +36,38 @@ fn print_list(l: Option<Box<Node<String>>>) {
         None => println!("."),
         Some(l) => {println!("{0}", l.val); print_list(l.next)},
     }
-    
+}
+
+fn find_and_print(s:String, l: Option<Box<Node<String>>>) {
+   match l {
+       Some(v) => {if v.val.contains(&s) {println!("{}", v.val)} else {println!("no {} in {}", s, v.val) }; find_and_print(s, v.next)},
+       None => {},
+   }
 }
 
 fn main() {
     let val1 = merge_two_lists(Some(Box::new(Node::new("value".to_string()))), Some(Box::new(Node::new("image".to_string()))));
     
      let val2 = Some(Box::new(Node::new("Aa".to_string())));
+     
+     let mut val : Option<Box<Node<String>>>;
 
     let res = merge_two_lists(val1, val2);
-    print_list(res);
+   // print_list(res);
+    val = res;
+    loop {
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).expect("Failed to read input");
+
+        match input.trim() {
+            "q" => break, //std::process::exit(0),
+            _ => {val = merge_two_lists(val, Some(Box::new(Node::new(input.trim().to_string()))));},
+        }
+    }
+    println!("What to find?");
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).expect("Failed to read input");
+    find_and_print(input.trim().to_string(), val);
+    //print_list(val);
+   println!("end")
 }
