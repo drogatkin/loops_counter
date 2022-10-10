@@ -1,6 +1,12 @@
 fn  findstem(mut arr:Vec<String>) -> Vec<String>
-{
-    // other shorter impl: https://gist.github.com/Coutlaw/cac31e5639236f99282813c32e6ed43d
+{   // other shorter impl: https://gist.github.com/Coutlaw/cac31e5639236f99282813c32e6ed43d
+
+    let mut res : Vec<String> =  vec![];
+    let n = arr.len();
+    
+    if n == 0 { return res }
+    else if n == 1 {res.push(arr[0].to_string()); return res };
+   
     // Determine size of the array
     arr.sort_by(|l, r| { // l.size() < r.size()
        let l_len = l.len();
@@ -8,7 +14,7 @@ fn  findstem(mut arr:Vec<String>) -> Vec<String>
        l_len.cmp(&r_len)
     });
     
-    let n = arr.len();
+   
     // Take first word from array as reference
 
     let s = &arr[0];
@@ -16,7 +22,7 @@ fn  findstem(mut arr:Vec<String>) -> Vec<String>
     let len = s.len();
     //println!("shortest str {}", s);
  
-    let mut res : Vec<String> =  vec![];
+    
 
     let mut i = len ;
     while i > 0 {
@@ -66,5 +72,7 @@ fn main() {
     assert_eq!(res, vec!["grac".to_string()]);
     let arr2 = vec!["kokobokafghtoka".to_string(), "gggtokavvboka".to_string(), "termtokagopabokah".to_string()];
     assert_eq!(findstem(arr2), vec!["toka".to_string(), "boka".to_string()]);
+    let arr3 = vec!["only one".to_string()];
+    assert_eq!(vec![arr3[0].to_string()], findstem(arr3));
     println!("Done.")
 }
