@@ -2,8 +2,8 @@ use std::fs;
 use std::env;
 use std::path::Path;
 use std::path::PathBuf;
-use std::io::{self, Write};
-use positioned_io::{RandomAccessFile, ReadAt};
+use std::io::{self, Write, prelude::*, SeekFrom};
+use std::fs::File;
 
 fn main() {
     println!("HexViw  (c) Copyright {}", 2022);
@@ -25,13 +25,12 @@ fn main() {
         let mut pathsVer = Vec::<PathBuf>::new();
    
         for (i, path) in paths.enumerate() {
-            let path1 = path.unwrap().path();
-            pathsVer.push(path1);
+            pathsVer.push(path.unwrap().path());
             
-           println!("{}: {}", i, pathsVer.last().unwrap().display());
+            println!("{}: {}", i, pathsVer.last().unwrap().display());
         }
        
-        print!("Enter of a number of an entry? ");
+        print!("Enter a number of an entry? ");
         io::stdout().flush().unwrap();
         let mut line = String::new();
         std::io::stdin().read_line(&mut line).unwrap();
@@ -39,10 +38,17 @@ fn main() {
             .expect("Please enter number");
         
          if num >= 0 && num < pathsVer.len()  {
-            println!("Selected file : {:?}", pathsVer[num]);
-            let raf = RandomAccessFile::open(pathsVer[num])?;
-            let mut buf = [0; 512];
-            let bytes_read = raf.read_at(0, &mut buf)?;
+           // println!("Selected file : {:?}", pathsVer[num]);
+            let file2 = pathsVer[num].as_path().display().to_string(); // into_os_string().into_string().unwrap()
+            println!("Selected file : {}", file2);
+            let mut buf = [0_u8;16];
+           // let mut f = File::open(file2.to_owned().into());
+           let mut f = io::Cursor::<Vec<u8>>::new(file2.to_owned().into());
+            f.read_exact(&mut buf[..16]).expect("read failed");
+           // println!("{}", hex::encode(&buf));
+            for byte in buf {
+              print!("{:02X} ", byte);
+            }
         } else {
             println!("Invalid entry - {}", num);
         }
