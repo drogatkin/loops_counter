@@ -5,7 +5,10 @@ use std::path::PathBuf;
 use std::io::{self, Write, prelude::*, SeekFrom};
 use std::fs::File;
 use std::str;
+//use byteorder::{ByteOrder, LittleEndian};
+//use byteorder::{ByteOrder, BigEndian};
 
+#[derive(PartialEq)]
 pub enum Format {
     Hex,
     Dec,
@@ -13,13 +16,15 @@ pub enum Format {
 }
 
 pub enum Display {
-    B16,
-    B32,
-    B64,
-    L16,
-    L32,
-    L64,
+    S16,
+    S32,
+    S64,
     A,
+}
+
+pub enum Ending {
+  BE,
+  LE
 }
 
 pub enum Cmd {
@@ -31,12 +36,12 @@ pub enum Cmd {
     Format {
        format : Format,
     },
-    Display (Display),
+    Display (Display, Ending)
 }
 
 fn cmdProc() -> Cmd {
     io::stdout().flush().unwrap();
-    print!("\nEnter a command <ENTER> - next, Onnnn - move to the offset, F[D|H|O] - display format, N[1|3|6][l|b], q - exit :  ");
+    print!("\n\x1b[1;31m\x1b[0;32mEnter a command <ENTER> - next, Onnnn - move to the offset, F[D|H|O] - display format, N[1|3|6|a][l|b], q - exit :  \x1b[0m");
     io::stdout().flush().unwrap();
     let mut line = String::new();
      std::io::stdin().read_line(&mut line).unwrap();
@@ -50,19 +55,22 @@ fn cmdProc() -> Cmd {
             } 
          },
          'N' | 'n' => {
-            let mut big = true;
+            let mut end = Ending::BE;
             if line.len() > 2 {
-                if 'l' == line.as_bytes()[2] as char { big = false; }
+                if 'l' == line.as_bytes()[2] as char { end = Ending::LE; }
             }
             match line.as_bytes()[1] as char {
                 '3'  => {
-                     if big { Cmd::Display(Display::B32) } else { Cmd::Display(Display::L32) }
+                     Cmd::Display(Display::S32, end)
                     },
                '6'  => {
-                     if big { Cmd::Display(Display::B64) } else { Cmd::Display(Display::L64) }
+                     Cmd::Display(Display::S64, end)
+                    },
+                'a' | 'A'  => {
+                     Cmd::Display(Display::A, end)
                     },
                 _  => {
-                     if big { Cmd::Display(Display::B16) } else { Cmd::Display(Display::L16) }
+                     Cmd::Display(Display::S16, end)
                     },
             } 
          },
@@ -73,6 +81,31 @@ fn cmdProc() -> Cmd {
          'q' | 'Q' => Cmd::Quit,
          _ => Cmd::Format{ format:Format::Dec},
      }
+}
+
+fn BigEndian_read_u16(buf: &[u8]) -> u16 {
+    buf[0] as u16 | (buf[1] as u16)<<8
+}
+
+fn LittleEndian_read_u16(buf: &[u8]) -> u16 {
+    buf[1] as u16 | (buf[0] as u16)<<8
+}
+
+fn BigEndian_read_u32(buf: &[u8]) -> u32 {
+    buf[0] as u32 |  (buf[1] as u32)<<8 | (buf[2] as u32)<<16 | (buf[3] as u32)<<24
+    //u32::from_be_bytes(buf)
+}
+
+fn LittleEndian_read_u32(buf: &[u8]) -> u32 {
+    buf[3] as u32 | (buf[2] as u32)<<8 | (buf[1] as u32)<<16 | (buf[0] as u32)<<24
+}
+
+fn BigEndian_read_u64(buf: &[u8]) -> u64 {
+    buf[0] as u64 | (buf[1] as u64)<<8 | (buf[2] as u64)<<16 | (buf[3] as u64)<<24 | (buf[4] as u64)<<32 | (buf[5] as u64)<<40 | (buf[6] as u64)<<48 | (buf[7] as u64)<<56
+}
+
+fn LittleEndian_read_u64(buf: &[u8]) -> u64 {
+    buf[7] as u64 | (buf[6] as u64)<<8 | (buf[5] as u64)<<16 | (buf[4] as u64)<<24 | (buf[3] as u64)<<32 | (buf[2] as u64)<<40 | (buf[1] as u64)<<48 | (buf[0] as u64)<<56
 }
 
 fn main() -> io::Result<()> {
@@ -126,19 +159,24 @@ fn main() -> io::Result<()> {
           
            let mut format1 = Format::Dec;
            let mut format2 = Display::A;
+           let mut format3 = Ending::BE;
            loop {
                if remain > 0 {
                    // print remaining
                    for byte in buf {  // buf[offset..offset+remain]
                         
                         if byteCnt == 0 {
-                            print!("\n{:0>8}: ", counter);
+                            if format1 == Format::Hex {
+                                print!("\n{:0>8x}: ", counter);
+                            } else {
+                              print!("\n{:0>8}: ", counter);
+                            }
                             pageCnt += 1;
                         }
                        if offset == 0 {
                             print!("{:02X} ", byte);
                             match byte {
-                                0x0a | 0x0d | 0x1b | 0x07 => strbuf[byteCnt] = 0x2e,
+                                0x0a | 0x0d | 0x1b | 0x07 | 0x08 | 0x09 | 0x0c => strbuf[byteCnt] = 0x2e,
                                 _ => strbuf[byteCnt] = byte,
                             }
                             //strbuf[byteCnt] = byte;
@@ -146,10 +184,52 @@ fn main() -> io::Result<()> {
                             byteCnt += 1;
                             if byteCnt == 16 {
                                 byteCnt = 0;
-                              //  let s = str::from_utf8(&strbuf).unwrap().to_string();
-                                 let s = String::from_utf8_lossy(&strbuf);
-                                //let s = String::from_utf8(strbuf.to_vec()).expect("Found invalid UTF-8");
-                                print!(" {}", s);
+                                match format2 {
+                                   Display::A => {
+                                       //  let s = str::from_utf8(&strbuf).unwrap().to_string();
+                                        let s = String::from_utf8_lossy(&strbuf);
+                                        //let s = String::from_utf8(strbuf.to_vec()).expect("Found invalid UTF-8");
+                                         print!(" {}", s);
+                                   } ,
+                                   Display::S16 => {
+                                       for ss in 0..8 {
+                                           match format3 {
+                                               Ending::BE => {
+                                                   print!("{:<6} ", BigEndian_read_u16(&strbuf[ss*2..ss*2+2]));
+                                               } ,
+                                                Ending::LE => {
+                                                   print!("{:<6} ", LittleEndian_read_u16(&strbuf[ss*2..ss*2+2]));
+                                               }
+                                          }   
+                                       }
+                                   },
+                                   Display::S32 => {
+                                       for ss in 0..4 {
+                                           match format3 {
+                                              Ending::BE => {
+                                                   print!("{:<10} ", BigEndian_read_u32(&strbuf[ss*4..ss*4+4]));
+                                               } ,
+                                                Ending::LE => {
+                                                   print!("{:<10} ", LittleEndian_read_u32(&strbuf[ss*4..ss*4+4]));
+                                               }
+                                          }   
+                                       }
+                                   },
+                                   Display::S64 => {
+                                       for ss in 0..2 {
+                                           match format3 {
+                                               Ending::BE => {
+                                                   print!("{:<14} ", BigEndian_read_u64(&strbuf[ss*8..ss*8+8]));
+                                               } ,
+                                                Ending::LE => {
+                                                   print!("{:<14} ", LittleEndian_read_u64(&strbuf[ss*8..ss*8+8]));
+                                               }
+                                          }   
+                                       }
+                                   },
+                                }
+                              
+                                
                                 if pageCnt == PAGESIZE {
                                    pageCnt = 0;
                                    let cmd = cmdProc();
@@ -164,7 +244,7 @@ fn main() -> io::Result<()> {
                                           byteCnt = 0;
                                         },
                                        Cmd::Format{format} => format1 = format,
-                                       Cmd::Display(d) => format2 = d,
+                                       Cmd::Display(d, e) => {format2 = d; format3 = e}
                                    }
                                 }
                             }
