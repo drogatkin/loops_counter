@@ -1,4 +1,4 @@
-use std::fs;
+
 pub struct Node<T> {
   pub val: T,
   pub  next: Option<Box<Node<T>>>
@@ -15,7 +15,7 @@ impl Node<String> {
 }
 
 
-pub struct NodeIter<'Li, DATA>(&'Li Option<Box<Node<DATA>>>);
+pub struct NodeIter<'li, DATA>(&'li Option<Box<Node<DATA>>>);
 
 impl <'no, NODE>  Iterator for NodeIter<'no, NODE> {
      type Item = &'no NODE;
@@ -39,9 +39,14 @@ fn main() {
         println!("{}", li)
     }
     
-    let paths = fs::read_dir("./").unwrap();
-
-    for path in paths {
-        println!("Name: {}", path.unwrap().path().display())
+    let mut tuple_tuple = (1u8, 2u16, 'd');
+    let eight = 8;
+    tuple_tuple.0 = eight;
+  
+    match tuple_tuple {
+        (3,2,'d') => println!("stupid tuple {:?}", tuple_tuple),
+        (8,_,s) => println!("our guy {}", s),
+        _ => println!("Something else")
     }
+    
 }
