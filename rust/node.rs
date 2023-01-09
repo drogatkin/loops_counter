@@ -1,3 +1,4 @@
+//extern crate xmlparser as xml;
 
 pub struct Node<T> {
   pub val: T,
@@ -32,6 +33,19 @@ impl <'no, NODE>  Iterator for NodeIter<'no, NODE> {
     }
 }
 
+fn refval(num: &mut i32) -> i32 {
+  *num += 5;
+  *num
+}
+
+fn refvalun(num: & i32) -> i32 {
+  *num + 5
+}
+
+struct Reader {
+  buf: [char;256],
+}
+
 fn main() {
     let stringlist = Some(Box::new(Node::new("value".to_string(), Some(Box::new(Node::new("image".to_string(), Some(Box::new(Node::new("star".to_string(), Some(Box::new(Node::new("end".to_string(), None))))))))))));
     
@@ -49,4 +63,13 @@ fn main() {
         _ => println!("Something else")
     }
     
+   /* for token in xmlparser::Tokenizer::from("<tagname name='value'/>") {
+      println!("{:?}", token);
+    }*/
+
+    let mut sum = 7;
+    let mut z = refval(&mut sum);
+    println!("before {} after {}", sum, z);
+    z = refvalun(&sum);
+    println!("before {} after {}", sum, z);
 }

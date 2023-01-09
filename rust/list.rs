@@ -76,8 +76,8 @@ impl<'li, NODE> Iterator for ListIter<'li, NODE> {
 
 
 
-impl<'no> Iterator for &'no Node<String> {
-     type Item = &'no Node<String>;
+impl <'no, VAL>  Iterator for &'no Node<VAL>  {
+     type Item = &'no Node<VAL>;
     fn next(&mut self) -> Option<Self::Item> {
         match &self.next {
             None => None,
@@ -99,6 +99,42 @@ fn find_and_print(s:String, l: Option<Box<Node<String>>>) {
        Some(v) => {if v.val.contains(&s) {println!("{}", v.val)} else {println!("no {} in {}", s, v.val) }; find_and_print(s, v.next)},
        None => {},
    }
+}
+
+fn unbox<T>(value: Box<T>) -> T {
+    *value
+}
+
+struct Factorial {
+    curr: u64,
+    n: u32,
+}
+
+impl Iterator for Factorial {
+    // We can refer to this type using Self::Item
+    type Item = u64;
+
+    // Here, we define the sequence using `.curr` and `.next`.
+    // The return type is `Option<T>`:
+    //     * When the `Iterator` is finished, `None` is returned.
+    //     * Otherwise, the next value is wrapped in `Some` and returned.
+    // We use Self::Item in the return type, so we can change
+    // the type without having to update the function signatures.
+    fn next(&mut self) -> Option<Self::Item> {
+        let np1 = self.n+1;
+
+        self.curr *= np1 as u64;
+        self.n = np1;
+
+        // Since there's no endpoint to a Factorial sequence, the `Iterator` 
+        // will never return `None`, and `Some` is always returned.
+        Some(self.curr)
+    }
+}
+
+// Returns a Fibonacci sequence generator
+fn factorial() -> Factorial {
+    Factorial { curr: 1, n: 0 }
 }
 
 fn main() {
@@ -142,6 +178,18 @@ fn main() {
             next: &List::Tail,
         },
     });
+    
+    if let  Some(val) = &val {
+       // for el in unbox(val) {
+         //   
+        //}
+      //let it = unbox(val);
+      let it = val.next();
+    }
+    
+    for i in factorial().skip(4).take(4) {
+        println!("> {}", i);
+    }
     
    println!("end")
 }

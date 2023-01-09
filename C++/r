@@ -7,13 +7,13 @@ else
    filename=$1
 fi
 
-if [[ $filename -nt ./main ]]; then
-  g++-10 -I /home/dmitriy/projects/shared/C++ -std=c++2a -Dexpclos $filename -lstdc++ -o main
+if [[ $filename -nt "./${filename%.*}" ]]; then
+  g++-10 -I /home/dmitriy/projects/shared/C++ -std=c++2a -Dexpclos $filename -lstdc++ -o ${filename%.*}
   retVal=$?
 else
   retVal=0
 fi
 if [ $retVal == 0 ]; then
-    ./main $2
+    "./${filename%.*}" $2
 fi
 

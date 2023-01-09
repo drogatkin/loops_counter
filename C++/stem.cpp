@@ -24,6 +24,8 @@ vector<string> findstem(vector<string> arr)
 
     string s = arr[0];
 
+auto const three = 3;
+
     int len = s.length();
  
     vector<string> res;
