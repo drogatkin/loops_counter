@@ -1,4 +1,4 @@
-use std::time::{Duration};
+use std::time::{Duration, SystemTime};
 use std::str;
 use std::sync::{Arc};
 use std::thread;
@@ -9,19 +9,18 @@ fn main() {
     let stop = Arc::new(AtomicBool::new(false));
 
     let stop_clone = stop.clone();
-
+    let now = SystemTime::now();
     let _thread = thread::spawn(move|| {
         thread::sleep(Duration::new(1, 0));
         stop.store(true, Ordering::Relaxed);
     });
-    let mut count = 0i32;
-    // Wait for the other thread to release the lock
+    let mut count = 0u64;
+    // increment counter while 1 sec passed
     while !stop_clone.load(Ordering::Relaxed)  {
         count += 1;
     }
-
-    let mut num = count
-        .abs()
+    let after_1sec = SystemTime::now();
+    let num = count
         .to_string()
         .as_bytes()
         .rchunks(3)
@@ -30,8 +29,6 @@ fn main() {
         .collect::<Result<Vec<&str>, _>>()
         .unwrap()
         .join(","); // separator
-    if count < 0 {
-        num = format!("-{num}")
-    }
-    println!("count: {num}");
+
+    println!("{now:?}\n{after_1sec:?}\ncount: {num}");
 }
