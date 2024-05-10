@@ -1,0 +1,34 @@
+# Print Fibonacci series, indicating #
+# if any of the numbers is Prime.    #
+# Language: ALGOL68                  #
+
+INT i,j,k,n;
+i := 1;
+j := 0;
+k := 1;
+
+PROC is_prime = (INT n) BOOL:
+BEGIN BOOL is_prime := TRUE;
+  IF n = 1 THEN
+    is_prime := FALSE
+  FI;
+  FOR i FROM 2 TO n DO
+    FOR j FROM 2 TO n DO
+      IF (i*j) = n THEN
+        is_prime := FALSE 
+      FI
+    OD
+  OD;
+  is_prime
+END;
+
+WHILE k < 5000 DO
+  k := i + j;
+  print(k);
+  IF is_prime(k) THEN
+    print (" Prime")
+  FI;
+  print(newline);
+  i := j;
+  j := k
+OD
