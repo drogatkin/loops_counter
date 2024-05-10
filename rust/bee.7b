@@ -1,9 +1,10 @@
 # comon script part for Rust projects
 
 project=count
-main=counter
+main= 	one_bill
 RUSTC=/home/dmitriy/side/rust/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
 executable=./${project}
+target=target:env
 
 
 target clean {
@@ -22,8 +23,17 @@ target build:. {
          anynewer(${~cwd~}/*.rs,${~cwd~}/${project})
    }
    {
+       if {
+           neq($target},) 
+           then {
+             assign(main, ${target})
+           }
+       }
       display(Compiling ${main} ...)
        exec RUSTC::  (
+            #-V,
+            -C, 
+           opt-level=3, # was z
            -o,
            ${project},
            ${main}.rs
