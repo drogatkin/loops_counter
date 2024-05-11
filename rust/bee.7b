@@ -23,8 +23,9 @@ target build:. {
          anynewer(${~cwd~}/*.rs,${~cwd~}/${project})
    }
    {
+       # display(${target})
        if {
-           neq($target},) 
+           and {neq(${target},) ; neq(${target}, target)}
            then {
              assign(main, ${target})
            }
