@@ -48,8 +48,26 @@ start: 1715218279747
  end: 1715218280747
 count: 2,652,172,171
 
-As you can see, Java appeared 30% slower than compiled languages. Rust used *opt-level=3* compilation option and C++ - *O3*.
+As you can see, Java appeared 30% slower than compiled languages. Rust used *opt-level=3* compilation option, and C++ - *O3*.
 You can also see that the latest Java is a bit slower than Java 8.
+
+The above test showed mostly effectiveness of data sharing between thread in the popular languages. But what about a single thread performance? 
+I selected a very simple calculation [task](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/perfect.cpp) in C++.
+
+> $ ./r perfect.cpp
+Compile and run....
+num: 8128/ sum:  8128
+num: 496/ sum:  496
+num: 28/ sum:  28
+num: 6/ sum:  6
+
+> real	0m0.521s
+user	0m0.514s
+sys	0m0.004s
+
+
+The test case was replicated in [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/perfect.rs) and [Java]( https://github.com/drogatkin/loops_counter/blob/master/java/code/Perfect.java).
+Performance numbers appeared very similar with slight advantage of C++ over competitors.
 
 ## Some recap
 
@@ -60,5 +78,13 @@ The table below shows testing result on different hardware and compilers:
 | 1.78.0 | 11.4.0 | TBD | 21.0.3 | i7 7 gen |
 | 3,222,942,950 | 3,232,063,904 | 2,586,544,161 | 2,157,080,054 | Ubuntu 22.04 |
 | TBD |  TBD |  TBD |  TBD |  TBD | 
+| 0.601 | 0.521 | 0.652 | 0.620 | Ubuntu 22.04 |
+
+You can see that C++ keeps a leadership in all tests, however a position of Rust only sightly behind. So my view is the following:
+
+1. Fast development with a good performance of a result product - Java will be the best choice
+2. Dependable programming with outstanding performance, but slow in a development - Rust will be not a mistake
+3. Ultra fast performance with relatively fast development, but not very reliable - C++ is your selection
+
 
 
