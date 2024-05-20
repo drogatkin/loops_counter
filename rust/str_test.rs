@@ -7,17 +7,9 @@ use std::time::{SystemTime};
 
 fn main() {
    let sys_time = SystemTime::now();
-   let mut exa = ran_str(25);
-   println!{ "str - {exa}" };
-   exa = ran_str(25);
-   println!{ "str - {exa}" };
-   exa = ran_str(5);
-   println!{ "str - {exa}" };
-   exa = ran_str(14);
-   println!{ "str - {exa}" };
-   exa = ran_str(235);
-   println!{ "str - {exa}" };
+   
    let ran_vals = [ran_str(6), ran_str(25), ran_str(14), ran_str(235) , ran_str(155)];
+   println!{ "str(s) - {ran_vals:?}" };
    let mut res = 0;
    for i in 1..100_000 {
        let str = match i {
@@ -36,13 +28,13 @@ fn main() {
        }
        }; 
        if let Some(pos) = str.find("A") {
-           res += pos
+           res += pos 
        }
        if let Some(pos) = str.rfind("z") {
-           res += pos
+           res += pos 
        }
    }
-   println!{ "Result: - {res}" };
+   println!{ "Result: {res}" };
    if let Ok(elapsed) = sys_time.elapsed() {
          println!("Finished in {}.{:<03} sec(s)", elapsed.as_secs(), elapsed.subsec_millis())
    }
