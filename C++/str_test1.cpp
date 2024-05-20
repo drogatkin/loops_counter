@@ -1,3 +1,4 @@
+#include <sstream>
 #include <string>
 #include <iostream>
 
@@ -20,25 +21,27 @@ std::string ran_str( size_t length )
 }
 
 int main() {
+    std::stringstream ss;
    std::string ran_vals[5] = {ran_str(6), ran_str(25), ran_str(14), ran_str(235) , ran_str(155)};
    auto res = 0;
    for (int i=1; i < 100'000; ++i) {
-       std::string str = "";
         if (i == 1)
-           str.append(ran_vals[0]);
+           ss << ran_vals[0];
         else if(i == 2) 
-           str.append(ran_vals[0]).append( ran_vals[1]);
+           ss << ran_vals[0] << ran_vals[1];
         else if(i == 3) 
-           str.append(ran_vals[1]).append(ran_vals[2]).append(ran_vals[0]);
+           ss << ran_vals[1] << ran_vals[2]  << ran_vals[0];
         else if(i == 4) 
-           str.append(ran_vals[3]).append(ran_vals[1]).append(ran_vals[2]).append(ran_vals[0]);
+           ss << ran_vals[3] << ran_vals[1]  << ran_vals[2] << ran_vals[0];
         else if(i == 5) 
-           str.append(ran_vals[3]).append(ran_vals[1]).append(ran_vals[2]).append(ran_vals[0]).append(ran_vals[4]);
+           ss << ran_vals[3] << ran_vals[1]  << ran_vals[2] << ran_vals[0] << ran_vals[4];
         else {
-            str.append(ran_vals[4]);
+            ss << ran_vals[4];
             for (int j= 1; j < i; ++j )
-                 str.append(ran_vals[j % ARRAY_COUNT(ran_vals)]);
+                 ss << ran_vals[j % ARRAY_COUNT(ran_vals)];
         }
+        std::string str = ss.str();
+        ss.clear();
         //std::cout << "String[" << i << "]: " << str << '\n';
         std::size_t found = str.find("A", 0);
         if (found!=std::string::npos)
