@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 
+#define ARRAY_COUNT(__a)   ((sizeof(__a) / sizeof((__a)[0])))
+
 std::string ran_str( size_t length )
 {
     auto randchar = []() -> char
@@ -36,10 +38,11 @@ int main() {
         else {
             ss << ran_vals[4];
             for (int j= 1; j < i; ++j )
-                 ss << ran_vals[j % sizeof(ran_vals)];
+                 ss << ran_vals[j % ARRAY_COUNT(ran_vals)];
         }
         std::string str = ss.str();
-        std::cout << "String[" << i << "]: " << str << '\n';
+        ss.clear();
+        //std::cout << "String[" << i << "]: " << str << '\n';
         std::size_t found = str.find("A", 0);
         if (found!=std::string::npos)
             res +=  found;
