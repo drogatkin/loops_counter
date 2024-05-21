@@ -9,7 +9,6 @@ fn main() {
    let sys_time = SystemTime::now();
    
    let ran_vals = [ran_str(6), ran_str(25), ran_str(14), ran_str(235) , ran_str(155)];
-   println!{ "str(s) - {ran_vals:?}" };
    let mut res = 0;
    for i in 1..100_000 {
        let str = match i {

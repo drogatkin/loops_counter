@@ -81,6 +81,9 @@ sys	0m0.004s
 The test case was replicated in [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/perfect.rs) and [Java]( https://github.com/drogatkin/loops_counter/blob/master/java/code/Perfect.java).
 Performance numbers appeared very similar with slight advantage of C++ over competitors.
 
+Finally, I decided to check an effectiveness working with a memory allocation. The test will also challenge Java garbage collector. The test didn't bring
+much surprises, but showed that Java starting losing more to competitors on memory operations.
+
 ## Some recap
 
 The table below shows testing result on different hardware and compilers:
@@ -89,13 +92,13 @@ The table below shows testing result on different hardware and compilers:
 | :---------- | :------: | ----: | -------: | :----------- | :----: |
 | 1.78.0 | 11.4.0 | TBD | 21.0.3 | i7 7 gen |  ver |
 | 3,222,942,950 | 3,232,063,904 | 2,586,544,161 | 2,157,080,054 | Ubuntu 22.04 | times |
-| TBD |  TBD |  TBD |  TBD |  TBD |  times |
+| 34.456 |  35.040 |  06:46:275 |   06:14:441 |  Ubuntu 22.04 |  min:sec:ms |
 | 0.601 | 0.521 | 0.652 | 0.620 | Ubuntu 22.04 | sec |
 
 You can see that C++ keeps a leadership in all tests, however a position of Rust only sightly behind. So my view is the following:
 
 1. A fast development with a good performance of a result product - Java will be the best choice
-2. Dependable programming with outstanding performance, but slow in a development - Rust will be not a mistake
+2. Dependable programming with outstanding performance, but slow in a development - Rust will be no mistake
 3. Ultra fast performance with a relatively fast development, but not very reliable - C++ is your choice
 
 

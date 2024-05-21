@@ -22,8 +22,10 @@ std::string ran_str( size_t length )
 int main() {
    std::string ran_vals[5] = {ran_str(6), ran_str(25), ran_str(14), ran_str(235) , ran_str(155)};
    auto res = 0;
+   std::string str = "";
+   str.reserve(1024*1024);
    for (int i=1; i < 100'000; ++i) {
-       std::string str = "";
+        str = "";
         if (i == 1)
            str.append(ran_vals[0]);
         else if(i == 2) 

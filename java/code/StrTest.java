@@ -47,7 +47,7 @@ public class StrTest {
        }
        System.out.printf("Result: %d \n", res);
        long time = System.currentTimeMillis() - startTime;
-       System.out.printf("Executed in %02d:%02d:%03d%n", TimeUnit.MILLISECONDS.toMinutes(time), TimeUnit.MILLISECONDS.toSeconds(time), time%1000);
+       System.out.printf("Executed in %02d:%02d:%03d%n", TimeUnit.MILLISECONDS.toMinutes(time), TimeUnit.MILLISECONDS.toSeconds(time)%60, time%1000);
     }
 
 }
