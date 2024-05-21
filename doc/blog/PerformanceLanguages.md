@@ -82,18 +82,19 @@ The test case was replicated in [Rust](https://github.com/drogatkin/loops_counte
 Performance numbers appeared very similar with slight advantage of C++ over competitors.
 
 Finally, I decided to check an effectiveness working with a memory allocation. The test will also challenge Java garbage collector. The test didn't bring
-much surprises, but showed that Java starting losing more to competitors on memory operations.
+much surprises, but showed that Java starting losing more to competitors on memory operations. The source for the test is [Java](https://github.com/drogatkin/loops_counter/blob/master/java/code/StrTest.java),
+ [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/str_test.rs), and [C++](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/str_test.cpp).
 
 ## Some recap
 
-The table below shows testing result on different hardware and compilers:
+The table below shows testing results different programming languages :
 
 | Rust | C++ | Java 8 | Java | Processor | In |
 | :---------- | :------: | ----: | -------: | :----------- | :----: |
-| 1.78.0 | 11.4.0 | TBD | 21.0.3 | i7 7 gen |  ver |
+| 1.78.0 | 11.4.0 | 1.8.0_401 | 21.0.3 | i7 7 gen |  ver |
 | 3,222,942,950 | 3,232,063,904 | 2,586,544,161 | 2,157,080,054 | Ubuntu 22.04 | times |
 | 34.456 |  35.040 |  06:46:275 |   06:14:441 |  Ubuntu 22.04 |  min:sec:ms |
-| 0.601 | 0.521 | 0.652 | 0.620 | Ubuntu 22.04 | sec |
+| 0.601 | 0.521 | 0.608 | 0.620 | Ubuntu 22.04 | sec |
 
 You can see that C++ keeps a leadership in all tests, however a position of Rust only sightly behind. So my view is the following:
 
