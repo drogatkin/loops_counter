@@ -26,9 +26,9 @@ SystemTime { tv_sec: 1715216905, tv_nsec: 814528333 }
 count: 3,219,570,640
 ```
 
-As you can see, the performance number got improved mostly in hundred times.This test pushed curiosity to check other popular languages as C++ and Java.
-First rewriting the program in C++ issued an infinity loop. Sure, you can't access a shared copy of data without a special construction, as AtomicBool in Rust. However,  
-nothing prevents you doing so in C++. Adding *volatile* memory access qualifier solved the problem. The C++ code you can see [there](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/counter4.cpp).
+As you can see, the performance number got improved mostly in hundred times. This test pushed curiosity to check other popular languages as C++ and Java.
+First rewriting the program in C++ issued an infinity loop. Sure, you can't access a shared copy of data without a special construction, as AtomicBool, or a Mutex in Rust. However,  
+nothing prevents you doing so in C++. Adding a *volatile* memory access qualifier solved the problem. The C++ code you can see [there](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/counter4.cpp).
 
 ```console
 Compile and run....
@@ -36,9 +36,9 @@ Elapsed: 1000
 count: 3,219,722,309
 ```
 
-As you can see, C+++ provides a similar performance to Rust. The tests were executed on a Linux machine equipped with Intel i7 of 7th generation.
-Remembering one billion rows challenge, I decided to test Java too. There is also no forcing for different threads to access shared data using synchronized, atomic or volatile data. However having C++ experience,
-volatile was added. Java [code](https://github.com/drogatkin/loops_counter/blob/master/java/code/Counter.java) showed the following numbers:
+As you can see, C+++ provides a similar performance to Rust. 
+Remembering one billion rows challenge, I decided to test Java too. There is also no forcing for different threads to access shared data using synchronized, atomic or volatile data. However a
+*volatile* was added keeping in mind  C++ experience. Java [code](https://github.com/drogatkin/loops_counter/blob/master/java/code/Counter.java) showed the following numbers:
 
 **Java 21**
 
@@ -87,20 +87,24 @@ much surprises, but showed that Java starting losing more to competitors on memo
 
 ## Some recap
 
-The table below shows testing results different programming languages :
+The table below shows testing results for different programming languages :
 
-| Rust | C++ | Java 8 | Java | Processor | In |
-| :---------- | :------: | ----: | -------: | :----------- | :----: |
-| 1.78.0 | 11.4.0 | 1.8.0_401 | 21.0.3 | i7 7 gen |  ver |
-| 3,222,942,950 | 3,232,063,904 | 2,586,544,161 | 2,157,080,054 | Ubuntu 22.04 | times |
-| 34.456 |  35.040 |  06:46:275 |   06:14:441 |  Ubuntu 22.04 |  min:sec:ms |
-| 0.601 | 0.521 | 0.608 | 0.620 | Ubuntu 22.04 | sec |
+| Rust | C++ | Java 8 | Java | Test # | In |
+| :---------- | :------: | ----: | -------: | :----: |  :-------- |
+| 1.78.0 | 11.4.0 | 1.8.0_401 | 21.0.3 |  |   |
+| 3,222,942,950 | 3,232,063,904 | 2,586,544,161 | 2,157,080,054 | 1 | times |
+| 0.601 | 0.521 | 0.608 | 0.620 | 2 | sec |
+| 34.456 |  35.040 |  06:46.275 |   06:14.441 |  3 |  min:sec.ms |
+
+All test were conducted on Intel i7 gen 7th processor, and OS Ubuntu 22.04. A test number was calculated as:
+
+An average number of ten runs om the machine without any additional load. 
 
 You can see that C++ keeps a leadership in all tests, however a position of Rust only sightly behind. So my view is the following:
 
 1. A fast development with a good performance of a result product - Java will be the best choice
 2. Dependable programming with outstanding performance, but slow in a development - Rust will be no mistake
-3. Ultra fast performance with a relatively fast development, but not very reliable - C++ is your choice
+3. Ultra fast performance with a relatively fast development, but not very reliable - C++ is your pick
 
 
 
