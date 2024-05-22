@@ -26,7 +26,7 @@ SystemTime { tv_sec: 1715216905, tv_nsec: 814528333 }
 count: 3,219,570,640
 ```
 
-As you can see, the performance number got improved mostly in hundred times. This test pushed curiosity to check other popular languages as C++ and Java.
+As you can see, the performance number got improved mostly in hundred times. This test pushed the curiosity to check other popular languages as C++ and Java.
 First rewriting the program in C++ issued an infinity loop. Sure, you can't access a shared copy of data without a special construction, as AtomicBool, or a Mutex in Rust. However,  
 nothing prevents you doing so in C++. Adding a *volatile* memory access qualifier solved the problem. The C++ code you can see [there](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/counter4.cpp).
 
@@ -37,7 +37,7 @@ count: 3,219,722,309
 ```
 
 As you can see, C+++ provides a similar performance to Rust. 
-Remembering one billion rows challenge, I decided to test Java too. There is also no forcing for different threads to access shared data using synchronized, atomic or volatile data. However a
+Remembering one billion rows challenge, I decided to test Java too. There is also no forcing for different threads to access shared data using a synchronized, an atomic or a volatile access. However a
 *volatile* was added keeping in mind  C++ experience. Java [code](https://github.com/drogatkin/loops_counter/blob/master/java/code/Counter.java) showed the following numbers:
 
 **Java 21**
@@ -81,11 +81,15 @@ sys	0m0.004s
 The test case was replicated in [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/perfect.rs) and [Java]( https://github.com/drogatkin/loops_counter/blob/master/java/code/Perfect.java).
 Performance numbers appeared very similar with slight advantage of C++ over competitors.
 
+
+
 Finally, I decided to check an effectiveness working with a memory allocation. The test will also challenge Java garbage collector. The test didn't bring
 much surprises, but showed that Java starting losing more to competitors on memory operations. The source for the test is [Java](https://github.com/drogatkin/loops_counter/blob/master/java/code/StrTest.java),
- [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/str_test.rs), and [C++](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/str_test.cpp).
+ [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/str_test.rs), and [C++](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/str_test.cpp). An interesting fact, that the Rust test started working 
+correctly and fast just after a successful compilation. However C++ code started from a page fault error and after figuring the cause and fixing it, a performance of the test was worse than Java. Some
+time required for its tuning, and restoring the status quo.
 
-## Some recap
+## Recap
 
 The table below shows testing results for different programming languages :
 
