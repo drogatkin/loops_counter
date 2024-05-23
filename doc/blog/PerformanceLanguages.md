@@ -17,6 +17,8 @@ count: 42,493,431
 One of theory why my numbers are similar to his that *Instant::now()* is actually an OS level call and slows down execution speed. So we decided to eliminate 
 the call replacing it by a version with a [sleeping thread](https://github.com/drogatkin/loops_counter/blob/master/rust/counter3.rs).
 
+## Test 1
+
 ```console
 RustBee (rb) v 1.08.04-nightly © 2024 D. Rogatkin
 Would you like to run count? [Y|n]  
@@ -61,7 +63,10 @@ count: 2,652,172,171
 As you can see, Java appeared 30% slower than the compiled languages. Rust used *opt-level=3* compilation option, and C++ - *O3*.
 You can also see that the latest Java is a bit slower than Java 8.
 
-The above test showed mostly effectiveness of data sharing between threads in the popular languages. But what about a single thread performance? 
+The above test showed mostly effectiveness of data sharing between threads in the popular languages. But what about a single thread performance?
+
+## Test 2
+ 
 I selected a very simple calculation [task](https://github.com/drogatkin/loops_counter/blob/master/C%2B%2B/perfect.cpp) in C++.
 
 ```console
@@ -81,7 +86,7 @@ sys	0m0.004s
 The test case was replicated in [Rust](https://github.com/drogatkin/loops_counter/blob/master/rust/perfect.rs) and [Java]( https://github.com/drogatkin/loops_counter/blob/master/java/code/Perfect.java).
 Performance numbers appeared very similar with slight advantage of C++ over competitors.
 
-
+## Test 3
 
 Finally, I decided to check an effectiveness working with a memory allocation. The test will also challenge Java garbage collector. The test didn't bring
 much surprises, but showed that Java starting losing more to competitors on memory operations. The source for the test is [Java](https://github.com/drogatkin/loops_counter/blob/master/java/code/StrTest.java),
@@ -100,9 +105,9 @@ The table below shows testing results for different programming languages :
 | 0.601 | 0.521 | 0.608 | 0.620 | 2 | sec |
 | 34.456 |  35.040 |  06:46.275 |   06:14.441 |  3 |  min:sec.ms |
 
-All test were conducted on Intel i7 gen 7th processor, and OS Ubuntu 22.04. A test number was calculated as:
+All tests were conducted on Intel i7 gen 7th processor, and OS Ubuntu 22.04. A test number was calculated as:
 
-An average number of ten runs om the machine without any additional load. 
+An average number of ten runs on the machine without any additional load. 
 
 You can see that C++ keeps a leadership in all tests, however a position of Rust only sightly behind. So my view is the following:
 
